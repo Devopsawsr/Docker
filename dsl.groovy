@@ -3,7 +3,7 @@ multibranchPipelineJob('DSL') {
         git {
             id('Devops')
             credentialsId('Github')
-            remote('https://github.com/Devopsawsr/Docker.git')
+            remote('https://github.com/Devopsawsr/DSL.git')
             includes('*')  // Include all branches
         }
     }
@@ -16,7 +16,7 @@ multibranchPipelineJob('DSL') {
         def triggers = it / triggers
         triggers << 'com.cloudbees.jenkins.plugins.GitHubMultibranchTrigger' {
             spec('')
-            overrideUrl('https://github.com/Devopsawsr/Docker.git')
+            overrideUrl('https://github.com/Devopsawsr/DSL.git')
         }
     }
     configure {
