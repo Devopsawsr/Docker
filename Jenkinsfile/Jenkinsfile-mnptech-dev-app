@@ -4,6 +4,7 @@ pipeline {
         stage ("clone") {
             steps {
                 echo "cloning the code from Github"
+                echo "To test the code"
             }
         }
         stage ("Deploy") {
