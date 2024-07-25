@@ -1,0 +1,56 @@
+pipeline {
+    agent {
+        kubernetes {
+            // Define the Kubernetes Pod Template
+            yaml """
+apiVersion: v1
+kind: Pod
+metadata:
+  name: docker-commands-pod
+spec:
+  containers:
+    - name: docker-commands-container
+      image: devopsawsr/chinna:v5
+      securityContext:
+        privileged: true
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+  volumes:
+    - name: workspace
+      emptyDir: {}
+            """
+        }
+    }
+
+    environment {
+        SCRIPT_URL = 'https://github.com/Devopsawsr/Docker.git/main/docker.sh'  // URL of your script on GitHub
+        SCRIPT_PATH = '/workspace/${JOB_NAME}/docker.sh'  // Path to store the script inside the container
+    }
+
+    stages {
+        stage('Fetch and Run Script') {
+            steps {
+                script {
+                    // Download the script from GitHub
+                    sh "curl -o ${SCRIPT_PATH} ${SCRIPT_URL}"
+                    
+                    // Make the script executable
+                    sh "chmod +x ${SCRIPT_PATH}"
+                    
+                    // Execute the script inside the container
+                    sh "${SCRIPT_PATH}"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()  // Clean up the Jenkins workspace
+        }
+    }
+}
